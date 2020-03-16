@@ -2,7 +2,6 @@ import { Before, Given, When, Then } from 'cucumber'
 import assert from 'assert'
 import TodoList from '../../src/TodoList'
 
-
 Before(function() {
   this.todoList = new TodoList()
 })
@@ -17,10 +16,10 @@ When('I add {string}', function(todo: string) {
   this.todoList.add(todo)
 })
 
-Then('the text of the 2nd todo should be {string}', function (expectedTodo: string) {
+Then('the text of the 2nd todo should be {string}', function(
+  expectedTodo: string
+) {
   // Write code here that turns the phrase above into concrete actions
   const secondTodo = this.todoList.getTodos()[1]
-  assert.strictEqual(secondTodo, expectedTodo) 
-
-});
-
+  assert.strictEqual(secondTodo, expectedTodo)
+})
