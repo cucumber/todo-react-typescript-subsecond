@@ -1,31 +1,55 @@
-import { Before, Given, Then, When } from 'cucumber'
+import {
+  defineParameterType,
+  Given,
+  setWorldConstructor,
+  Then,
+  When,
+} from 'cucumber'
 import assert from 'assert'
-import TodoList from '../../src/TodoList'
-import ITodoList from '../../src/ITodoList'
-import ReactTodoList from '../../src/ReactTodoList'
+import IActor from '../../src/IActor'
+import MemoryActor from '../../src/MemoryActor'
 
-let todoList: ITodoList
-
-Before(function() {
-  if (process.env.ASSEMBLY === 'react') {
-    todoList = new ReactTodoList()
-  } else {
-    todoList = new TodoList()
-  }
+defineParameterType({
+  name: 'actor',
+  regexp: /[A-Z][a-z]+/,
+  transformer(actorName: string): IActor {
+    return this.getActorByName(actorName)
+  },
 })
 
-Given('Sam has already added {int} todo', function(todoCount: number) {
+class TodoWorld {
+  private readonly actorsByName = new Map<string, IActor>()
+
+  getActorByName(name: string): IActor {
+    let actor = this.actorsByName.get(name)
+    if (actor === undefined) {
+      actor = new MemoryActor()
+      this.actorsByName.set(name, actor)
+    }
+    return actor
+  }
+}
+
+setWorldConstructor(TodoWorld)
+
+Given('{actor} has already added {int} todo', function(
+  actor: IActor,
+  todoCount: number
+) {
   for (let n = 0; n < todoCount; n++) {
-    todoList.add(`TODO #${n + 1}`)
+    actor.addTodo(`TODO #${n + 1}`)
   }
 })
 
-When('Sam adds {string}', function(todo: string) {
-  todoList.add(todo)
+When('{actor} adds {string}', function(actor: IActor, todo: string) {
+  actor.addTodo(todo)
 })
 
-Then('Sam should see {string} at the top', function(expectedTodo: string) {
+Then('{actor} should see {string} at the top', function(
+  actor: IActor,
+  expectedTodo: string
+) {
   // Write code here that turns the phrase above into concrete actions
-  const secondTodo = todoList.getTodos()[0]
+  const secondTodo = actor.getTodos()[0]
   assert.strictEqual(secondTodo, expectedTodo)
 })
