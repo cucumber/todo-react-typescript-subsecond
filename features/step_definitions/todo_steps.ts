@@ -5,8 +5,22 @@ import ITodoList from '../../src/ITodoList'
 
 let todoList: ITodoList
 
+class ReactTodoList implements ITodoList {
+  add(todo: string): void {
+    throw new Error('not implemented')
+  }
+
+  getTodos(): ReadonlyArray<string> {
+    throw new Error('not implemented')
+  }
+}
+
 Before(function() {
-  todoList = new TodoList()
+  if (process.env.ASSEMBLY === 'react') {
+    todoList = new ReactTodoList()
+  } else {
+    todoList = new TodoList()
+  }
 })
 
 Given('there is already {int} todo', function(todoCount: number) {
