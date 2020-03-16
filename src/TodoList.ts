@@ -1,4 +1,6 @@
-export default class TodoList {
+import ITodoList from './ITodoList'
+
+export default class TodoList implements ITodoList {
   private readonly todos: string[] = []
 
   add(todo: string) {
