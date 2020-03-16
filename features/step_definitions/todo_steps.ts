@@ -8,6 +8,7 @@ import {
 import assert from 'assert'
 import IActor from '../../src/IActor'
 import MemoryActor from '../../src/MemoryActor'
+import ReactActor from '../../src/ReactActor'
 
 defineParameterType({
   name: 'actor',
@@ -23,7 +24,11 @@ class TodoWorld {
   getActorByName(name: string): IActor {
     let actor = this.actorsByName.get(name)
     if (actor === undefined) {
-      actor = new MemoryActor()
+      if(process.env.ASSEMBLY === 'react') {
+        actor = new ReactActor()
+      } else {
+        actor = new MemoryActor()
+      }
       this.actorsByName.set(name, actor)
     }
     return actor

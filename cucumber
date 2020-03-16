@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 TS_NODE_TRANSPILE_ONLY=1 \
-./node_modules/.bin/cucumber-js \
+./node_modules/.bin/cucumber-electron \
 --require-module ts-node/register \
 --require 'features/**/*.ts' \
 $@
