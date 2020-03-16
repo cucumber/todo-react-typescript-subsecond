@@ -4,7 +4,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "test": "./cucumber",
+    "test": "cucumber-js --require-module ts-node/register --require features/step_definitions/todo_steps.ts",
     "lint": "eslint --ext ts --max-warnings 0 src features",
     "lint-fix": "eslint --ext ts --max-warnings 0 --fix src features",
     "clean": "rm -rf ./out",
