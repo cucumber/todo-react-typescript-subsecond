@@ -4,7 +4,7 @@ import TodoList from './TodoList'
 export default class TodoListActor implements IActor {
   private readonly todoList = new TodoList()
 
-  addTodo(todo: string): void {
+  async addTodo(todo: string): Promise<void> {
     this.todoList.add(todo)
   }
 

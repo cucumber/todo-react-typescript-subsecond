@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
+if [[ "${ASSEMBLY}" == "react" ]]; then
+  cucumber=./node_modules/.bin/cucumber-electron
+else
+  cucumber=./node_modules/.bin/cucumber-js
+fi
+
 TS_NODE_TRANSPILE_ONLY=1 \
-./node_modules/.bin/cucumber-electron \
+${cucumber} \
 --require-module ts-node/register \
 --require 'features/**/*.ts' \
 $@

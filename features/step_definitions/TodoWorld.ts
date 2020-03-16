@@ -2,6 +2,7 @@ import IActor from '../../src/IActor'
 import ReactActor from '../../src/ReactActor'
 import TodoListActor from '../../src/TodoListActor'
 import { defineParameterType, setWorldConstructor } from 'cucumber'
+import TodoList from '../../src/TodoList'
 
 defineParameterType({
   name: 'actor',
@@ -19,7 +20,10 @@ class TodoWorld {
     let actor = this.actorsByName.get(name)
     if (actor === undefined) {
       if (process.env.ASSEMBLY === 'react') {
-        actor = new ReactActor()
+        const todoList = new TodoList()
+        const useTodoList: UseTodoList = () => todoList.getTodos()
+        const useAddTodo: UseAddTodo = () => (todo: string) => todoList.add(todo)
+        actor = new ReactActor(useTodoList, useAddTodo)
       } else {
         actor = new TodoListActor()
       }

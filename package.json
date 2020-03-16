@@ -20,11 +20,11 @@
     "typescript": "^3.8.3"
   },
   "devDependencies": {
-    "@cucumber/microdata": "^1.0.0",
+    "@cucumber/microdata": "^1.1.0",
     "@testing-library/dom": "^7.0.4",
     "@types/cucumber": "^6.0.0",
-    "@typescript-eslint/eslint-plugin": "^2.22.0",
-    "@typescript-eslint/parser": "^2.22.0",
+    "@typescript-eslint/eslint-plugin": "^2.24.0",
+    "@typescript-eslint/parser": "^2.24.0",
     "cucumber": "^6.0.5",
     "cucumber-electron": "^2.7.0",
     "electron": "^8.0.3",

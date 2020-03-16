@@ -1,5 +1,5 @@
 export default interface IActor {
-  addTodo(todo: string): void
+  addTodo(todo: string): Promise<void>
 
   getTodos(): ReadonlyArray<string>
 }
