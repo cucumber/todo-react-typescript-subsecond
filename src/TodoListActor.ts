@@ -1,7 +1,7 @@
 import IActor from './IActor'
 import TodoList from './TodoList'
 
-export default class MemoryActor implements IActor {
+export default class TodoListActor implements IActor {
   private readonly todoList = new TodoList()
 
   addTodo(todo: string): void {

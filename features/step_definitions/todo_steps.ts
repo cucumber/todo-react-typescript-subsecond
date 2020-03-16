@@ -1,41 +1,6 @@
-import {
-  defineParameterType,
-  Given,
-  setWorldConstructor,
-  Then,
-  When,
-} from 'cucumber'
+import { Given, Then, When } from 'cucumber'
 import assert from 'assert'
 import IActor from '../../src/IActor'
-import MemoryActor from '../../src/MemoryActor'
-import ReactActor from '../../src/ReactActor'
-
-defineParameterType({
-  name: 'actor',
-  regexp: /[A-Z][a-z]+/,
-  transformer(actorName: string): IActor {
-    return this.getActorByName(actorName)
-  },
-})
-
-class TodoWorld {
-  private readonly actorsByName = new Map<string, IActor>()
-
-  getActorByName(name: string): IActor {
-    let actor = this.actorsByName.get(name)
-    if (actor === undefined) {
-      if(process.env.ASSEMBLY === 'react') {
-        actor = new ReactActor()
-      } else {
-        actor = new MemoryActor()
-      }
-      this.actorsByName.set(name, actor)
-    }
-    return actor
-  }
-}
-
-setWorldConstructor(TodoWorld)
 
 Given('{actor} has already added {int} todo', function(
   actor: IActor,
