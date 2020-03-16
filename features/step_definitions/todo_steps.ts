@@ -1,8 +1,16 @@
-import { Given } from 'cucumber'
+import { Before, Given, When } from 'cucumber'
+import TodoList from '../../src/TodoList'
+
+Before(function() {
+  this.todoList = new TodoList()
+})
 
 Given('there is already {int} todo', function(todoCount: number) {
-  const todoList = new TodoList()
   for (let n = 0; n < todoCount; n++) {
-    todoList.add(`TODO #${n + 1}`)
+    this.todoList.add(`TODO #${n + 1}`)
   }
+})
+
+When('I add {string}', function(todo: string) {
+  this.todoList.add(todo)
 })
