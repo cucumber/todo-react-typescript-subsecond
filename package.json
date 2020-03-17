@@ -4,8 +4,10 @@
   "license": "MIT",
   "private": true,
   "scripts": {
+    "test-domain": "cross-env ASSEMBLY=domain cucumber-js --require features/support/env.js --require 'features/**/*.ts'",
     "test-react": "cross-env ASSEMBLY=react cucumber-electron --require features/support/env.js --require 'features/**/*.ts'",
-    "test": "cucumber-electron --require-module ts-node/register --require features/step_definitions/TodoWorld.ts --require features/step_definitions/todo_steps.ts",
+    "test-react-http": "cross-env ASSEMBLY=react-http cucumber-electron --require features/support/env.js --require 'features/**/*.ts'",
+    "test": "npm run test-domain && npm run test-react && npm run test-react-http",
     "lint": "eslint --ext ts --max-warnings 0 src features",
     "lint-fix": "eslint --ext ts --max-warnings 0 --fix src features",
     "clean": "rm -rf ./out",

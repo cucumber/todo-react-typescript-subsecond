@@ -5,8 +5,7 @@ else
   cucumber=./node_modules/.bin/cucumber-js
 fi
 
-TS_NODE_TRANSPILE_ONLY=1 \
 ${cucumber} \
---require-module ts-node/register \
+--require features/support/env.js \
 --require 'features/**/*.ts' \
 $@
