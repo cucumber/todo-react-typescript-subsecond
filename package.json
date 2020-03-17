@@ -4,6 +4,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
+    "test-react": "cross-env ASSEMBLY=react cucumber-electron --require features/support/env.js --require 'features/**/*.ts'",
     "test": "cucumber-electron --require-module ts-node/register --require features/step_definitions/TodoWorld.ts --require features/step_definitions/todo_steps.ts",
     "lint": "eslint --ext ts --max-warnings 0 src features",
     "lint-fix": "eslint --ext ts --max-warnings 0 --fix src features",
@@ -29,6 +30,7 @@
     "@types/cucumber": "^6.0.0",
     "@typescript-eslint/eslint-plugin": "^2.24.0",
     "@typescript-eslint/parser": "^2.24.0",
+    "cross-env": "^7.0.2",
     "cucumber": "^6.0.5",
     "cucumber-electron": "^2.7.0",
     "electron": "^8.0.3",

@@ -4,7 +4,7 @@ import IActor from '../../src/IActor'
 
 Given('{actor} has already added {int} todo(s)', async function(actor: IActor, todoCount: number) {
   for (let n = 0; n < todoCount; n++) {
-    await actor.addTodo(`TODO #${n + 1}`)
+    await actor.addTodo(`SOME TODO #${n + 1}`)
   }
 })
 

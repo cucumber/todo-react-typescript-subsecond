@@ -37,7 +37,7 @@ const TodoApp: React.FunctionComponent<IProps> = ({ useTodoList, addTodo }) => {
       {todoList === null ? (
         <div>Loading...</div>
       ) : (
-        <ul itemScope itemType="http://schema.org/ItemList" data-testid="todos">
+        <ul itemScope itemType="http://schema.org/ItemList">
           {todoList.map((todo, n) => (
             <li key={n} itemProp="itemListElement" itemType="http://schema.org/Text">
               {todo}
