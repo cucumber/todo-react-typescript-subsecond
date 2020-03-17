@@ -1,2 +1,2 @@
 type UseTodoList = () => ReadonlyArray<string> | null
-type UseAddTodo = () => (todo: string) => void
+type AddTodo = (todo: string) => Promise<void>

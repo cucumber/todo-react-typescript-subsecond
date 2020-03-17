@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-if [[ "${ASSEMBLY}" == "react" ]]; then
+if [[ "${ASSEMBLY}" =~ "react" ]]; then
   cucumber=./node_modules/.bin/cucumber-electron
 else
   cucumber=./node_modules/.bin/cucumber-js
