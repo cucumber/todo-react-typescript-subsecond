@@ -8,7 +8,6 @@ interface IProps {
 }
 
 const TodoApp: React.FunctionComponent<IProps> = ({ useTodoList, addTodo }) => {
-  const [busy, setBusy] = useState(false)
   const [newTodo, setNewTodo] = useState('')
   const todoList = useTodoList()
 
@@ -20,9 +19,7 @@ const TodoApp: React.FunctionComponent<IProps> = ({ useTodoList, addTodo }) => {
     if (event.keyCode == ENTER_KEY) {
       // TODO: proper error handling
       setNewTodo('')
-      setBusy(true)
       addTodo(newTodo)
-        .then(() => setBusy(false))
         .catch((error: Error) => console.error(error.stack))
     }
   }
@@ -32,7 +29,7 @@ const TodoApp: React.FunctionComponent<IProps> = ({ useTodoList, addTodo }) => {
       <h1>todos</h1>
       <input
         className="new-todo"
-        placeholder={busy ? 'Please wait' : 'What needs to be done?'}
+        placeholder={todoList === null ? 'Please wait' : 'What needs to be done?'}
         value={newTodo}
         onChange={onChange}
         onKeyDown={onKeydown}
@@ -40,7 +37,7 @@ const TodoApp: React.FunctionComponent<IProps> = ({ useTodoList, addTodo }) => {
       {todoList === null ? (
         <div>Loading...</div>
       ) : (
-        <ul itemScope itemType="http://schema.org/ItemList">
+        <ul itemScope itemType="http://schema.org/ItemList" data-testid="todos">
           {todoList.map((todo, n) => (
             <li key={n} itemProp="itemListElement" itemType="http://schema.org/Text">
               {todo}

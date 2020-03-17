@@ -30,9 +30,7 @@ export default function makeExpressApp() {
     for (const sse of sses) {
       sse.writeMessage({ event: 'todos-updated', data: 'x' })
     }
-    setTimeout(() => {
-      res.end()
-    }, 100)
+    res.end()
   })
 
   return app

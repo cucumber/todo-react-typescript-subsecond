@@ -1,6 +1,10 @@
 import { render } from 'react-dom'
-// @ts-ignore
-import { getByPlaceholderText, fireEvent, waitFor } from '@testing-library/dom'
+import {
+  fireEvent,
+  findByPlaceholderText,
+  findByTestId,
+  waitForDomChange,
+} from '@testing-library/dom'
 import IActor from './IActor'
 import TodoApp from './components/TodoApp'
 import React from 'react'
@@ -16,16 +20,16 @@ export default class ReactActor implements IActor {
   }
 
   async addTodo(todo: string): Promise<void> {
-    const input = getByPlaceholderText(this.element, 'What needs to be done?') as HTMLInputElement
+    const input = await findByPlaceholderText(this.element, 'What needs to be done?')
+    const todos = await findByTestId(this.element, 'todos')
     fireEvent.change(input, { target: { value: todo } })
     fireEvent.keyDown(input, { key: 'Enter', keyCode: 13 })
-    await waitFor(() => getByPlaceholderText(this.element, 'What needs to be done?'), {
-      container: this.element,
-    })
+    await waitForDomChange({ container: todos })
   }
 
   getTodos(): ReadonlyArray<string> {
     const itemList = microdata('http://schema.org/ItemList', this.element) as ItemList
+    if (itemList.itemListElement === undefined) return []
     return itemList.itemListElement as Text[]
   }
 }
