@@ -51,9 +51,9 @@ class TodoWorld {
     await listen(0)
     const port = (server.address() as AddressInfo).port
     const baseURL = new URL(`http://localhost:${port}`)
-    const useTodoList: UseTodoList = makeUseHttpTodoList(baseURL)
-    const useAddTodo: AddTodo = makeHttpAddTodo(baseURL)
-    return new ReactActor(useTodoList, useAddTodo)
+    const useTodoList = makeUseHttpTodoList(baseURL)
+    const addTodo = makeHttpAddTodo(baseURL)
+    return new ReactActor(useTodoList, addTodo)
   }
 }
 

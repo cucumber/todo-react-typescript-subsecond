@@ -11,9 +11,9 @@ import assert from 'assert'
 export default class ReactActor implements IActor {
   private readonly element = document.createElement('div')
 
-  constructor(useTodoList: UseTodoList, useAddTodo: AddTodo) {
+  constructor(useTodoList: UseTodoList, addTodo: AddTodo) {
     document.body.appendChild(this.element)
-    render(<TodoApp useTodoList={useTodoList} addTodo={useAddTodo} />, this.element)
+    render(<TodoApp useTodoList={useTodoList} addTodo={addTodo} />, this.element)
   }
 
   async addTodo(todo: string): Promise<void> {
