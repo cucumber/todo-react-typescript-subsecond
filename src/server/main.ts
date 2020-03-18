@@ -17,7 +17,7 @@ async function main() {
     })
   )
   app.use(express.static(__dirname + '/../../public'))
-  
+
   const server = http.createServer(app)
   const listen = promisify(server.listen.bind(server))
   await listen(3000)

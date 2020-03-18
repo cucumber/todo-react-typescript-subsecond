@@ -12,7 +12,7 @@ When('{actor} adds {string}', async function(actor: IActor, todo: string) {
   await actor.addTodo(todo)
 })
 
-Then('{actor} should see {string} at the top', function(actor: IActor, expectedTodo: string) {
-  const topTodo = (actor.getTodos())[0]
+Then('{actor} should see {string} at the top', async function(actor: IActor, expectedTodo: string) {
+  const topTodo = (await actor.getTodos())[0]
   assert.strictEqual(topTodo, expectedTodo)
 })

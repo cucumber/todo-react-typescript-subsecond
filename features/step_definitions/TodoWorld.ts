@@ -1,3 +1,4 @@
+import webdriver from 'selenium-webdriver'
 import IActor from '../../src/IActor'
 import ReactActor from '../../src/ReactActor'
 import TodoListActor from '../../src/TodoListActor'
@@ -9,6 +10,7 @@ import makeExpressApp from '../../src/server/makeExpressApp'
 import http from 'http'
 import { promisify } from 'util'
 import { AddressInfo } from 'net'
+import WebDriverActor from '../../src/WebDriverActor'
 
 defineParameterType({
   name: 'actor',
@@ -29,6 +31,8 @@ class TodoWorld {
         actor = this.makeReactActor()
       } else if (process.env.ASSEMBLY === 'react-http') {
         actor = await this.makeReactHttpActor()
+      } else if (process.env.ASSEMBLY === 'webdriver') {
+        actor = await this.makeWebDriverActor()
       } else {
         actor = new TodoListActor()
       }
@@ -54,6 +58,12 @@ class TodoWorld {
     const useTodoList = makeUseHttpTodoList(baseURL)
     const addTodo = makeHttpAddTodo(baseURL)
     return new ReactActor(useTodoList, addTodo)
+  }
+
+  private async makeWebDriverActor(): Promise<IActor> {
+    const browser = new webdriver.Builder().forBrowser('firefox').build()
+    await browser.get('http://localhost:3000')
+    return new WebDriverActor(browser)
   }
 }
 
