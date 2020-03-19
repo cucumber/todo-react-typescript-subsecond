@@ -2,7 +2,7 @@ import { render } from 'react-dom'
 // @ts-ignore
 import { findByPlaceholderText, fireEvent, waitFor } from '@testing-library/dom'
 import IActor from './IActor'
-import TodoApp from './components/TodoApp'
+import TodoApp from '../../src/client/components/TodoApp'
 import React from 'react'
 import { microdata } from '@cucumber/microdata'
 import { ItemList } from 'schema-dts'

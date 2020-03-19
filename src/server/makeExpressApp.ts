@@ -1,7 +1,7 @@
 import express, { RequestHandler } from 'express'
 import bodyParser from 'body-parser'
 import SseStream from 'ssestream'
-import TodoList from '../TodoList'
+import TodoList from './TodoList'
 
 export default function makeExpressApp(...middlewares: RequestHandler[]) {
   const todoList = new TodoList()

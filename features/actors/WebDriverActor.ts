@@ -26,7 +26,10 @@ export default class WebDriverActor implements IActor {
   }
 
   getTodos(): ReadonlyArray<string> {
-    const itemList = microdata('http://schema.org/ItemList', this.doc!) as ItemList
+    if (this.doc === undefined) {
+      throw new Error('No doc')
+    }
+    const itemList = microdata('http://schema.org/ItemList', this.doc) as ItemList
     if (itemList.itemListElement === undefined) return []
     if (typeof itemList.itemListElement === 'string') return [itemList.itemListElement]
     return itemList.itemListElement as string[]
