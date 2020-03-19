@@ -10,7 +10,7 @@ Tiny Todo app in React and TypeScript demonstrating sub-second test feedback
   * There are multiple implementations of `IActor`
 * `Then` steps are synchronous
   * It's previous steps' responsibility to ensure the system is in a "settled" state
-  * The `ReactActor` implementation uses [@cucumber/microdata](https://github.com/cucumber/microdata) to query the DOM
+  * The `ReactActor` and `WebDriverActor` implementation uses [@cucumber/microdata](https://github.com/cucumber/microdata) to query the DOM
 
 ### Production code
 
@@ -76,7 +76,8 @@ Tiny Todo app in React and TypeScript demonstrating sub-second test feedback
 * Use tags to run fewer scenarios as we go deeper
   * The only addition confidence with WebDriver / CBT is browser portability
   * Therefore we can run fewer - the lower level assemblies give us sufficient confidence about UI logic, HTTP and biz logic
-* We didn't deep dive into how Cucumber-Electron works. Watch out for a new Webinar 
+* We didn't deep dive into how Cucumber-Electron works. Watch out for a new Webinar
+  * Microdata
 
 ### TODO
 
