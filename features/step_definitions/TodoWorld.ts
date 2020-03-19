@@ -101,7 +101,6 @@ class TodoWorld {
     const caps = {
       name: 'Basic Test Example',
       build: '1.0',
-      version: '70',
       platform: 'Windows 10',
       // eslint-disable-next-line @typescript-eslint/camelcase
       screen_resolution: '1366x768',
@@ -109,7 +108,9 @@ class TodoWorld {
       record_video: 'true',
       // eslint-disable-next-line @typescript-eslint/camelcase
       record_network: 'false',
-      browserName: 'Chrome',
+      // https://help.crossbrowsertesting.com/selenium-testing/getting-started/crossbrowsertesting-automation-capabilities/
+      browserName: 'internet explorer',
+      version: '11',
       username: process.env['CBT_USERNAME'],
       password: process.env['CBT_AUTHKEY'],
     }
