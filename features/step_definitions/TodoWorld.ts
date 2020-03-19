@@ -12,6 +12,8 @@ import Server from '../../src/server/Server'
 import makeWebpackMiddleware from '../../src/server/makeWebpackMiddleware'
 import { promisify } from 'util'
 import makeStaticMiddleware from '../../src/server/makeStaticMiddleware'
+// @ts-ignore
+import cbt from 'cbt_tunnels'
 
 defineParameterType({
   name: 'actor',
@@ -35,6 +37,8 @@ class TodoWorld {
         actor = await this.makeReactHttpActor()
       } else if (process.env.ASSEMBLY === 'webdriver') {
         actor = await this.makeLocalWebDriverActor()
+      } else if (process.env.ASSEMBLY === 'crossbrowsertesting') {
+        actor = await this.makeCrossBrowserTestingWebDriverActor()
       } else {
         actor = new TodoListActor()
       }
@@ -73,6 +77,46 @@ class TodoWorld {
     await server.listen(0)
     this.closers.push(server.close.bind(server))
     const browser = new webdriver.Builder().forBrowser('firefox').build()
+    await browser.get(`http://localhost:${server.port}`)
+    this.closers.push(browser.close.bind(browser))
+    return new WebDriverActor(browser)
+  }
+
+  private async makeCrossBrowserTestingWebDriverActor(): Promise<IActor> {
+    const cbtStart = promisify(cbt.start.bind(cbt))
+    await cbtStart({ username: process.env['CBT_USERNAME'], authkey: process.env['CBT_AUTHKEY'] })
+    const cbtStop = promisify(cbt.stop.bind(cbt))
+    // @ts-ignore
+    this.closers.push(cbtStop)
+
+    const webpackMiddleware = makeWebpackMiddleware()
+    this.closers.push(promisify(webpackMiddleware.close.bind(webpackMiddleware)))
+    const app = makeExpressApp(webpackMiddleware, makeStaticMiddleware())
+    const server = new Server(app)
+    await server.listen(0)
+    this.closers.push(server.close.bind(server))
+
+    // See https://help.crossbrowsertesting.com/selenium-testing/getting-started/javascript/
+    const cbtHub = 'http://hub.crossbrowsertesting.com:80/wd/hub'
+    const caps = {
+      name: 'Basic Test Example',
+      build: '1.0',
+      version: '70',
+      platform: 'Windows 10',
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      screen_resolution: '1366x768',
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      record_video: 'true',
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      record_network: 'false',
+      browserName: 'Chrome',
+      username: process.env['CBT_USERNAME'],
+      password: process.env['CBT_AUTHKEY'],
+    }
+    const browser = new webdriver.Builder()
+      .usingServer(cbtHub)
+      .withCapabilities(caps)
+      .build()
     await browser.get(`http://localhost:${server.port}`)
     this.closers.push(browser.close.bind(browser))
     return new WebDriverActor(browser)
