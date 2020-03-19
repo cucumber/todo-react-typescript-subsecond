@@ -9,18 +9,20 @@ export default class WebDriverActor implements IActor {
   constructor(private readonly browser: ThenableWebDriver) {}
 
   async addTodo(todo: string): Promise<void> {
+    await this.updateDoc()
+    const todoCount = this.getTodos().length
+
     const input = await this.browser.findElement(By.css('input'))
     await input.sendKeys(todo)
     await input.sendKeys(Key.RETURN)
 
-    // const input = await findByPlaceholderText(this.element, 'What needs to be done?')
-    // const todoCount = this.getTodos().length
-    // fireEvent.change(input, { target: { value: todo } })
-    // fireEvent.keyDown(input, { key: 'Enter', keyCode: 13 })
-    // await waitFor(() => assert.equal(this.getTodos().length, todoCount + 1), {
-    //   container: this.element,
-    // })
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    await this.browser.wait(async () => {
+      await this.updateDoc()
+      return this.getTodos().length === todoCount + 1
+    })
+  }
+
+  private async updateDoc() {
     const html = await this.browser.getPageSource()
     this.doc = new JSDOM(html).window.document.documentElement
   }
