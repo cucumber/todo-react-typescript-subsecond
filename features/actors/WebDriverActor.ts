@@ -1,8 +1,7 @@
 import IActor from './IActor'
-import { By, ThenableWebDriver, Key } from 'selenium-webdriver'
+import { By, Key, ThenableWebDriver } from 'selenium-webdriver'
 import { JSDOM } from 'jsdom'
-import { microdata } from '@cucumber/microdata'
-import { ItemList } from 'schema-dts'
+import getTodosFromDom from './getTodosFromDom'
 
 export default class WebDriverActor implements IActor {
   private doc?: HTMLElement
@@ -31,9 +30,6 @@ export default class WebDriverActor implements IActor {
     if (this.doc === undefined) {
       throw new Error('No doc')
     }
-    const itemList = microdata('http://schema.org/ItemList', this.doc) as ItemList
-    if (itemList.itemListElement === undefined) return []
-    if (typeof itemList.itemListElement === 'string') return [itemList.itemListElement]
-    return itemList.itemListElement as string[]
+    return getTodosFromDom(this.doc)
   }
 }

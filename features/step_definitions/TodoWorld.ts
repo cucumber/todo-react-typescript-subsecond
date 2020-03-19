@@ -34,7 +34,7 @@ class TodoWorld {
       } else if (process.env.ASSEMBLY === 'react-http') {
         actor = await this.makeReactHttpActor()
       } else if (process.env.ASSEMBLY === 'webdriver') {
-        actor = await this.makeWebDriverActor()
+        actor = await this.makeLocalWebDriverActor()
       } else {
         actor = new TodoListActor()
       }
@@ -65,7 +65,7 @@ class TodoWorld {
     return new ReactActor(useTodoList, addTodo)
   }
 
-  private async makeWebDriverActor(): Promise<IActor> {
+  private async makeLocalWebDriverActor(): Promise<IActor> {
     const webpackMiddleware = makeWebpackMiddleware()
     this.closers.push(promisify(webpackMiddleware.close.bind(webpackMiddleware)))
     const app = makeExpressApp(webpackMiddleware, makeStaticMiddleware())

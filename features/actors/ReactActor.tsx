@@ -4,9 +4,8 @@ import { findByPlaceholderText, fireEvent, waitFor } from '@testing-library/dom'
 import IActor from './IActor'
 import TodoApp from '../../src/client/components/TodoApp'
 import React from 'react'
-import { microdata } from '@cucumber/microdata'
-import { ItemList } from 'schema-dts'
 import assert from 'assert'
+import getTodosFromDom from './getTodosFromDom'
 
 export default class ReactActor implements IActor {
   private readonly element = document.createElement('div')
@@ -27,9 +26,6 @@ export default class ReactActor implements IActor {
   }
 
   getTodos(): ReadonlyArray<string> {
-    const itemList = microdata('http://schema.org/ItemList', this.element) as ItemList
-    if (itemList.itemListElement === undefined) return []
-    if (typeof itemList.itemListElement === 'string') return [itemList.itemListElement]
-    return itemList.itemListElement as string[]
+    return getTodosFromDom(this.element)
   }
 }
