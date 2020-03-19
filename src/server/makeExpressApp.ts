@@ -1,27 +1,17 @@
-import express from 'express'
+import express, { RequestHandler } from 'express'
 import bodyParser from 'body-parser'
 import SseStream from 'ssestream'
 import TodoList from '../TodoList'
-import webpack from 'webpack'
-import webpackMiddleware from 'webpack-dev-middleware'
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const webpackConfig = require('../../webpack.config.js')
 
-export default function makeExpressApp(serveAssets: boolean) {
+export default function makeExpressApp(...middlewares: RequestHandler[]) {
   const todoList = new TodoList()
   const sses = new Set<SseStream>()
 
   const app = express()
   app.use(bodyParser.json())
 
-  if (serveAssets) {
-    const compiler = webpack(webpackConfig)
-    app.use(
-      webpackMiddleware(compiler, {
-        publicPath: webpackConfig.output.publicPath,
-      })
-    )
-    app.use(express.static(__dirname + '/../../public'))
+  for (const middleware of middlewares) {
+    app.use(middleware)
   }
 
   app.get('/eventsource', (req, res) => {

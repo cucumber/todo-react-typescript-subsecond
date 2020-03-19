@@ -9,6 +9,9 @@ import makeHttpAddTodo from '../../src/hooks/makeHttpAddTodo'
 import makeExpressApp from '../../src/server/makeExpressApp'
 import WebDriverActor from '../../src/WebDriverActor'
 import Server from '../../src/server/Server'
+import makeWebpackMiddleware from '../../src/server/makeWebpackMiddleware'
+import { promisify } from 'util'
+import makeStaticMiddleware from '../../src/server/makeStaticMiddleware'
 
 defineParameterType({
   name: 'actor',
@@ -52,7 +55,7 @@ class TodoWorld {
   }
 
   private async makeReactHttpActor(): Promise<IActor> {
-    const app = makeExpressApp(false)
+    const app = makeExpressApp()
     const server = new Server(app)
     await server.listen(0)
     this.closers.push(server.close.bind(server))
@@ -63,19 +66,15 @@ class TodoWorld {
   }
 
   private async makeWebDriverActor(): Promise<IActor> {
-    const app = makeExpressApp(true)
+    const webpackMiddleware = makeWebpackMiddleware()
+    this.closers.push(promisify(webpackMiddleware.close.bind(webpackMiddleware)))
+    const app = makeExpressApp(webpackMiddleware, makeStaticMiddleware())
     const server = new Server(app)
     await server.listen(0)
     this.closers.push(server.close.bind(server))
     const browser = new webdriver.Builder().forBrowser('firefox').build()
     await browser.get(`http://localhost:${server.port}`)
-    this.closers.push(async () => {
-      console.log('quitting')
-      await browser.quit()
-      console.log('closing')
-      await browser.close()
-      console.log('dead')
-    })
+    this.closers.push(browser.close.bind(browser))
     return new WebDriverActor(browser)
   }
 }
