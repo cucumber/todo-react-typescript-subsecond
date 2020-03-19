@@ -37,7 +37,7 @@ class TodoWorld {
         actor = await this.makeReactHttpActor()
       } else if (process.env.ASSEMBLY === 'webdriver') {
         actor = await this.makeLocalWebDriverActor()
-      } else if (process.env.ASSEMBLY === 'crossbrowsertesting') {
+      } else if (process.env.ASSEMBLY === 'cbt') {
         actor = await this.makeCrossBrowserTestingWebDriverActor()
       } else {
         actor = new TodoListActor()

@@ -21,7 +21,6 @@ Tiny Todo app in React and TypeScript demonstrating sub-second test feedback
 
 ### Webinar script
 
-
 * Explain purpose
   * Show BDD workflow with sub-second feedback
   * With full-stack UI tests (React app + Server)
