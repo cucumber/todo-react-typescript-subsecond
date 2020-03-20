@@ -1,7 +1,7 @@
-import IActor from './IActor'
+import IActor from '../IActor'
 import { By, Key, ThenableWebDriver } from 'selenium-webdriver'
 import { JSDOM } from 'jsdom'
-import getTodosFromDom from './getTodosFromDom'
+import getTodosFromDom from '../dom/getTodosFromDom'
 
 export default class WebDriverActor implements IActor {
   private doc?: HTMLElement

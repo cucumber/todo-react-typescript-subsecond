@@ -1,11 +1,11 @@
 import { render } from 'react-dom'
 // @ts-ignore
 import { findByPlaceholderText, fireEvent, waitFor } from '@testing-library/dom'
-import IActor from './IActor'
-import TodoApp from '../../src/client/components/TodoApp'
+import IActor from '../IActor'
+import TodoApp from '../../../src/client/components/TodoApp'
 import React from 'react'
 import assert from 'assert'
-import getTodosFromDom from './getTodosFromDom'
+import getTodosFromDom from '../dom/getTodosFromDom'
 
 export default class ReactActor implements IActor {
   constructor(private readonly element: HTMLElement, useTodoList: UseTodoList, addTodo: AddTodo) {

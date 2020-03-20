@@ -1,5 +1,5 @@
-import IActor from './IActor'
-import TodoList from '../../src/server/TodoList'
+import IActor from '../IActor'
+import TodoList from '../../../src/server/TodoList'
 
 export default class TodoListActor implements IActor {
   private readonly todoList = new TodoList()

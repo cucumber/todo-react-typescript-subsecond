@@ -2,8 +2,9 @@ import express, { RequestHandler } from 'express'
 import bodyParser from 'body-parser'
 import SseStream from 'ssestream'
 import TodoList from './TodoList'
+import { RequestListener } from 'http'
 
-export default function makeExpressApp(...middlewares: RequestHandler[]) {
+export default function makeExpressApp(...middlewares: RequestHandler[]): RequestListener {
   const todoList = new TodoList()
   const sses = new Set<SseStream>()
 
