@@ -8,10 +8,7 @@ import assert from 'assert'
 import getTodosFromDom from './getTodosFromDom'
 
 export default class ReactActor implements IActor {
-  private readonly element = document.createElement('div')
-
-  constructor(useTodoList: UseTodoList, addTodo: AddTodo) {
-    document.body.appendChild(this.element)
+  constructor(private readonly element: HTMLElement, useTodoList: UseTodoList, addTodo: AddTodo) {
     render(<TodoApp useTodoList={useTodoList} addTodo={addTodo} />, this.element)
   }
 

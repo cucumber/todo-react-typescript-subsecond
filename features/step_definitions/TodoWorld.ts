@@ -12,8 +12,7 @@ import Server from '../../src/server/Server'
 import makeWebpackMiddleware from '../../src/server/makeWebpackMiddleware'
 import { promisify } from 'util'
 import makeStaticMiddleware from '../../src/server/makeStaticMiddleware'
-// @ts-ignore
-import cbt from 'cbt_tunnels'
+import makeActorElement from '../actors/makeActorElement'
 
 defineParameterType({
   name: 'actor',
@@ -32,9 +31,9 @@ class TodoWorld {
     let actor = this.actorsByName.get(name)
     if (actor === undefined) {
       if (process.env.ASSEMBLY === 'react') {
-        actor = this.makeReactActor()
+        actor = await this.makeReactActor(name)
       } else if (process.env.ASSEMBLY === 'react-http') {
-        actor = await this.makeReactHttpActor()
+        actor = await this.makeReactHttpActor(name)
       } else if (process.env.ASSEMBLY === 'webdriver') {
         actor = await this.makeLocalWebDriverActor()
       } else if (process.env.ASSEMBLY === 'cbt') {
@@ -51,14 +50,15 @@ class TodoWorld {
     await Promise.all(this.closers.map(close => close()))
   }
 
-  private makeReactActor(): IActor {
+  private async makeReactActor(name: string): Promise<IActor> {
     const todoList = new TodoList()
-    const useTodoList: UseTodoList = () => todoList.getTodos()
-    const useAddTodo: AddTodo = async (todo: string) => todoList.add(todo)
-    return new ReactActor(useTodoList, useAddTodo)
+    const useTodoList = () => todoList.getTodos()
+    const addTodo = async (todo: string) => todoList.add(todo)
+    const element = await makeActorElement(name)
+    return new ReactActor(element, useTodoList, addTodo)
   }
 
-  private async makeReactHttpActor(): Promise<IActor> {
+  private async makeReactHttpActor(name: string): Promise<IActor> {
     const app = makeExpressApp()
     const server = new Server(app)
     await server.listen(0)
@@ -66,7 +66,8 @@ class TodoWorld {
     const baseURL = new URL(`http://localhost:${server.port}`)
     const useTodoList = makeUseHttpTodoList(baseURL)
     const addTodo = makeHttpAddTodo(baseURL)
-    return new ReactActor(useTodoList, addTodo)
+    const element = await makeActorElement(name)
+    return new ReactActor(element, useTodoList, addTodo)
   }
 
   private async makeLocalWebDriverActor(): Promise<IActor> {
@@ -83,6 +84,9 @@ class TodoWorld {
   }
 
   private async makeCrossBrowserTestingWebDriverActor(): Promise<IActor> {
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const cbt = require('cbt_tunnels')
     const cbtStart = promisify(cbt.start.bind(cbt))
     await cbtStart({ username: process.env['CBT_USERNAME'], authkey: process.env['CBT_AUTHKEY'] })
     const cbtStop = promisify(cbt.stop.bind(cbt))
