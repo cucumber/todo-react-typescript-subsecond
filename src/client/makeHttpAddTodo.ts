@@ -1,3 +1,9 @@
+/**
+ * Makes a {@link AddTodo} function that uses {@link fetch} to POST new todos
+ * to the server
+ *
+ * @param baseURL the base URL of the server
+ */
 export default function makeHttpAddTodo(baseURL: URL): AddTodo {
   return async (todo: string): Promise<void> => {
     const url = new URL('/todos', baseURL).toString()

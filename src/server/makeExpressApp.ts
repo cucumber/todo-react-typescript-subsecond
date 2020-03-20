@@ -6,7 +6,7 @@ import { RequestListener } from 'http'
 
 export default function makeExpressApp(): RequestListener {
   const todoList = new TodoList()
-  const sses = new Set<SseStream>()
+  const connectedEventSources = new Set<SseStream>()
   const app = express()
 
   app.use(bodyParser.json())
@@ -14,11 +14,11 @@ export default function makeExpressApp(): RequestListener {
 
   app.get('/eventsource', (req, res) => {
     const sse = new SseStream(req)
-    sses.add(sse)
+    connectedEventSources.add(sse)
     sse.pipe(res)
     req.on('close', () => {
       sse.unpipe(res)
-      sses.delete(sse)
+      connectedEventSources.delete(sse)
     })
   })
 
@@ -29,7 +29,7 @@ export default function makeExpressApp(): RequestListener {
   app.post('/todos', (req, res) => {
     const { todo } = req.body
     todoList.add(todo)
-    for (const sse of sses) {
+    for (const sse of connectedEventSources) {
       sse.writeMessage({ event: 'todos-updated', data: 'x' })
     }
     res.end()
