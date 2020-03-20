@@ -8,8 +8,9 @@ interface IProps {
 }
 
 const TodoApp: React.FunctionComponent<IProps> = ({ useTodoList, addTodo }) => {
+  const [error, setError] = useState<Error | null>()
   const [newTodo, setNewTodo] = useState('')
-  const todoList = useTodoList()
+  const todoList = useTodoList(setError)
 
   function onChange(event: React.ChangeEvent<HTMLInputElement>) {
     setNewTodo(event.target.value)
@@ -17,14 +18,14 @@ const TodoApp: React.FunctionComponent<IProps> = ({ useTodoList, addTodo }) => {
 
   function onKeydown(event: React.KeyboardEvent) {
     if (event.keyCode == ENTER_KEY) {
-      // TODO: proper error handling
       setNewTodo('')
-      addTodo(newTodo).catch((error: Error) => console.error(error.stack))
+      addTodo(newTodo).catch(setError)
     }
   }
 
   return (
     <header>
+      {error && <pre>{error.message}</pre>}
       <h1>todos</h1>
       <input
         className="new-todo"

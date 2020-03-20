@@ -1,21 +1,15 @@
 import { useEffect, useState } from 'react'
 
 export default function makeUseHttpTodoList(baseURL: URL): UseTodoList {
-  return function useHttpTodoList() {
+  return (setError: SetError) => {
     const [todos, setTodos] = useState<ReadonlyArray<string> | null>(null)
 
     useEffect(() => {
       const eventSource = new EventSource(new URL('/eventsource', baseURL).toString())
-      eventSource.addEventListener('todos-updated', () => {
-        fetchAndSetTodos()
-          // TODO: better error handling needed
-          .catch(err => console.error(err))
-      })
-      // TODO: better error handling needed
-      eventSource.onerror = event => console.error('EventSource error', event)
-      fetchAndSetTodos()
-        // TODO: better error handling needed
-        .catch(err => console.error(err))
+      eventSource.addEventListener('todos-updated', () => fetchAndSetTodos().catch(setError))
+      eventSource.onerror = () => setError(new Error('EventSource error'))
+      eventSource.onopen = () => setError(null)
+      fetchAndSetTodos().catch(setError)
 
       return () => eventSource.close()
     }, [])

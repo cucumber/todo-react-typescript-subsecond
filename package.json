@@ -4,6 +4,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
+    "start": "npm run build && ts-node src/server/main.ts",
     "test-domain": "cross-env ASSEMBLY=domain cucumber-js --require features/support/env.js --require 'features/**/*.ts'",
     "test-react": "cross-env ASSEMBLY=react cucumber-electron --require features/support/env.js --require 'features/**/*.ts'",
     "test-react-http": "cross-env ASSEMBLY=react-http cucumber-electron --require features/support/env.js --require 'features/**/*.ts'",
