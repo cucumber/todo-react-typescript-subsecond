@@ -9,11 +9,11 @@
     "test-react-http": "cross-env ASSEMBLY=react-http cucumber-electron --require features/support/env.js --require 'features/**/*.ts'",
     "test-webdriver": "cross-env ASSEMBLY=webdriver cucumber-js --require features/support/env.js --require 'features/**/*.ts'",
     "test-cbt": "cross-env ASSEMBLY=cbt cucumber-js --require features/support/env.js --require 'features/**/*.ts'",
-    "test": "npm run test-domain && npm run test-react && npm run test-react-http && npm run test-webdriver && npm run test-cbt",
+    "test": "npm run test-domain && npm run test-react && npm run test-react-http && npm run build && npm run test-webdriver && npm run test-cbt",
     "lint": "eslint --ext ts --max-warnings 0 src features",
     "lint-fix": "eslint --ext ts --max-warnings 0 --fix src features",
     "clean": "rm -rf ./out",
-    "build": "tsc",
+    "build": "webpack",
     "build:watch": "yarn build --watch"
   },
   "dependencies": {
@@ -57,7 +57,6 @@
     "ts-loader": "^6.2.1",
     "ts-node": "^8.6.2",
     "webpack": "^4.42.0",
-    "webpack-cli": "^3.3.11",
-    "webpack-dev-middleware": "^3.7.2"
+    "webpack-cli": "^3.3.11"
   }
 }

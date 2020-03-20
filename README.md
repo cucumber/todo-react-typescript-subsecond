@@ -11,6 +11,9 @@ Tiny Todo app in React and TypeScript demonstrating sub-second test feedback
 * `Then` steps are synchronous
   * It's previous steps' responsibility to ensure the system is in a "settled" state
   * The `ReactActor` and `WebDriverActor` implementation uses [@cucumber/microdata](https://github.com/cucumber/microdata) to query the DOM
+* Reuse "heavy" resources between scenarios
+  * The same WebDriver browser instance (takes time to launch a new browser)
+  * The same Server (takes time to run webpack). No webpack is used in react-http mode, but it's simpler to share the server anyway
 
 ### Production code
 

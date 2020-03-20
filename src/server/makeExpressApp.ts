@@ -1,19 +1,16 @@
-import express, { RequestHandler } from 'express'
+import express from 'express'
 import bodyParser from 'body-parser'
 import SseStream from 'ssestream'
 import TodoList from './TodoList'
 import { RequestListener } from 'http'
 
-export default function makeExpressApp(...middlewares: RequestHandler[]): RequestListener {
+export default function makeExpressApp(): RequestListener {
   const todoList = new TodoList()
   const sses = new Set<SseStream>()
-
   const app = express()
-  app.use(bodyParser.json())
 
-  for (const middleware of middlewares) {
-    app.use(middleware)
-  }
+  app.use(bodyParser.json())
+  app.use(express.static(__dirname + '/../../public'))
 
   app.get('/eventsource', (req, res) => {
     const sse = new SseStream(req)

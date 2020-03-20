@@ -1,6 +1,7 @@
 export default function makeHttpAddTodo(baseURL: URL): AddTodo {
   return async (todo: string): Promise<void> => {
-    const response = await fetch(new URL('/todos', baseURL).toString(), {
+    const url = new URL('/todos', baseURL).toString()
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

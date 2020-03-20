@@ -16,6 +16,8 @@ export default function makeUseHttpTodoList(baseURL: URL): UseTodoList {
       fetchAndSetTodos()
         // TODO: better error handling needed
         .catch(err => console.error(err))
+
+      return () => eventSource.close()
     }, [])
 
     async function fetchAndSetTodos() {

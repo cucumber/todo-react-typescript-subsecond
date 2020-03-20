@@ -11,4 +11,12 @@ export default class TodoListActor implements IActor {
   getTodos(): ReadonlyArray<string> {
     return this.todoList.getTodos()
   }
+
+  start(): Promise<void> {
+    return Promise.resolve()
+  }
+
+  close(): Promise<void> {
+    return Promise.resolve()
+  }
 }

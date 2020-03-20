@@ -19,8 +19,7 @@ const TodoApp: React.FunctionComponent<IProps> = ({ useTodoList, addTodo }) => {
     if (event.keyCode == ENTER_KEY) {
       // TODO: proper error handling
       setNewTodo('')
-      addTodo(newTodo)
-        .catch((error: Error) => console.error(error.stack))
+      addTodo(newTodo).catch((error: Error) => console.error(error.stack))
     }
   }
 
