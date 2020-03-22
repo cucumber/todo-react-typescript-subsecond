@@ -4,8 +4,7 @@ import SseStream from 'ssestream'
 import TodoList from './TodoList'
 import { RequestListener } from 'http'
 
-export default function makeExpressApp(): RequestListener {
-  const todoList = new TodoList()
+export default function makeExpressApp(todoList: TodoList): RequestListener {
   const connectedEventSources = new Set<SseStream>()
   const app = express()
 

@@ -41,7 +41,7 @@ export default class ReactActor implements IActor {
     render(<TodoApp useTodoList={this.useTodoList} addTodo={this.addTodoFn} />, this.appElement)
   }
 
-  close(): Promise<void> {
+  stop(): Promise<void> {
     // We have to explicitly unmount the React App to trigger the useEffect cleanup functions
     assert(unmountComponentAtNode(this.appElement!))
     this.fakeBrowserErowserElement!.remove()

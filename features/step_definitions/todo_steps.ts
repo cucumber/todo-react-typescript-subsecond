@@ -1,10 +1,12 @@
 import { Given, Then, When } from 'cucumber'
 import assert from 'assert'
 import IActor from '../actors/IActor'
+import TodoList from '../../src/server/TodoList'
 
-Given('{actor} has already added {int} todo(s)', async function(actor: IActor, todoCount: number) {
+Given('there is/are already {int} todo(s)', async function(todoCount: number) {
+  const todoList: TodoList = this.todoList
   for (let n = 0; n < todoCount; n++) {
-    await actor.addTodo(`SOME TODO #${n + 1}`)
+    todoList.add(`TODO ${n + 1}`)
   }
 })
 

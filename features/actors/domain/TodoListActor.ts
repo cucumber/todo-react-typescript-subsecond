@@ -16,7 +16,7 @@ export default class TodoListActor implements IActor {
     return Promise.resolve()
   }
 
-  close(): Promise<void> {
+  stop(): Promise<void> {
     return Promise.resolve()
   }
 }

@@ -4,5 +4,5 @@ export default interface IActor {
   getTodos(): ReadonlyArray<string>
 
   start(): Promise<void>
-  close(): Promise<void>
+  stop(): Promise<void>
 }

@@ -1,13 +1,14 @@
-import http, { RequestListener } from 'http'
+import http from 'http'
 import { promisify } from 'util'
 import { AddressInfo } from 'net'
 import makeExpressApp from './makeExpressApp'
+import TodoList from './TodoList'
 
 export default class Server {
   private readonly server: http.Server
 
-  constructor() {
-    this.server = http.createServer(makeExpressApp())
+  constructor(todoList: TodoList) {
+    this.server = http.createServer(makeExpressApp(todoList))
   }
 
   async listen(port: number) {
@@ -16,7 +17,8 @@ export default class Server {
   }
 
   get port() {
-    return (this.server.address() as AddressInfo).port
+    const address = this.server.address() as AddressInfo
+    return address ? address.port : undefined
   }
 
   async close() {

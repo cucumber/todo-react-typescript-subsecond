@@ -1,30 +1,31 @@
 import IActor from '../IActor'
-import webdriver, { By, Key, ThenableWebDriver } from 'selenium-webdriver'
+import { By, Key, ThenableWebDriver } from 'selenium-webdriver'
 import { JSDOM } from 'jsdom'
 import getTodosFromDom from '../dom/getTodosFromDom'
 
 export default class WebDriverActor implements IActor {
   private doc?: HTMLElement
-  public static browser?: ThenableWebDriver
 
-  constructor(private readonly port: number) {}
+  constructor(private readonly browser: ThenableWebDriver, private readonly startURL: string) {}
 
   async addTodo(todo: string): Promise<void> {
     await this.updateDoc()
     const todoCount = this.getTodos().length
 
-    const input = await WebDriverActor.browser!.findElement(By.css('input'))
+    const input = await this.browser.findElement(
+      By.css("input[placeholder='What needs to be done?']")
+    )
     await input.sendKeys(todo)
     await input.sendKeys(Key.RETURN)
 
-    await WebDriverActor.browser!.wait(async () => {
+    await this.browser.wait(async () => {
       await this.updateDoc()
       return this.getTodos().length === todoCount + 1
     })
   }
 
   private async updateDoc() {
-    const html = await WebDriverActor.browser!.getPageSource()
+    const html = await this.browser.getPageSource()
     this.doc = new JSDOM(html).window.document.documentElement
   }
 
@@ -33,14 +34,11 @@ export default class WebDriverActor implements IActor {
   }
 
   async start(): Promise<void> {
-    if (WebDriverActor.browser) {
-      return
-    }
-    WebDriverActor.browser = new webdriver.Builder().forBrowser('firefox').build()
-    await WebDriverActor.browser.get(`http://localhost:${this.port}`)
+    await this.browser.get(this.startURL)
+    // await new Promise(resolve => setTimeout(resolve, 1000))
   }
 
-  close(): Promise<void> {
+  stop(): Promise<void> {
     // We're not closing the browser here. Instead we're reusing a shared instance to speed up our scenarios.
     // The shared browser is closed in the AfterAll hook defined in TodoWorld
     return Promise.resolve()
