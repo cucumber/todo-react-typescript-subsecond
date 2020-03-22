@@ -18,7 +18,7 @@ export default class Server {
 
   get port() {
     const address = this.server.address() as AddressInfo
-    return address ? address.port : undefined
+    return address.port
   }
 
   async close() {

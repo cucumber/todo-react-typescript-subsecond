@@ -19,12 +19,12 @@ defineParameterType({
 })
 
 const todoList = new TodoList()
-const server = new Server(todoList)
+
+let server: Server
 let browser: ThenableWebDriver | null = null
 
 class TodoWorld {
   private readonly todoList = todoList
-  private readonly server = server
   private readonly actorsByName = new Map<string, IActor>()
   private readonly closers: Array<() => Promise<void>> = []
 
@@ -55,12 +55,6 @@ class TodoWorld {
     await Promise.all(this.closers.map(close => close()))
   }
 
-  private async startServer(): Promise<void> {
-    if (!this.server.port) {
-      await this.server.listen(0)
-    }
-  }
-
   private async makeReactActor(name: string): Promise<IActor> {
     const useTodoList = () => this.todoList.getTodos()
     const addTodo = async (todo: string) => this.todoList.add(todo)
@@ -68,21 +62,28 @@ class TodoWorld {
   }
 
   private async makeReactHttpActor(name: string): Promise<IActor> {
-    await this.startServer()
-    const baseURL = new URL(`http://localhost:${this.server.port}`)
+    await startServer()
+    const baseURL = new URL(`http://localhost:${server.port}`)
     const useTodoList = makeUseHttpTodoList(baseURL)
     const addTodo = makeHttpAddTodo(baseURL)
     return new ReactActor(name, useTodoList, addTodo)
   }
 
   private async makeWebDriverActor(): Promise<IActor> {
-    await this.startServer()
+    await startServer()
     if (browser === null) {
       browser = new webdriver.Builder().forBrowser('firefox').build()
     }
-    const startURL = `http://localhost:${this.server.port}`
+    const startURL = `http://localhost:${server.port}`
 
     return new WebDriverActor(browser, startURL)
+  }
+}
+
+async function startServer(): Promise<void> {
+  if (!server) {
+    server = new Server(todoList)
+    await server.listen(0)
   }
 }
 
@@ -105,7 +106,7 @@ AfterAll(async function() {
       // no-op
     }
   }
-  if (server.port) {
+  if (server) {
     await server.close()
   }
 })
