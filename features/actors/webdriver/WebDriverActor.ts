@@ -2,9 +2,15 @@ import IActor from '../IActor'
 import { By, Key, ThenableWebDriver } from 'selenium-webdriver'
 import { JSDOM } from 'jsdom'
 import getTodosFromDom from '../dom/getTodosFromDom'
+import Server from '../../../src/server/Server'
 
 export default class WebDriverActor implements IActor {
   private doc?: HTMLElement
+
+  static async createFromServer(browser: ThenableWebDriver, server: Server) {
+    const startURL = `http://localhost:${server.port}`
+    return new WebDriverActor(browser, startURL)
+  }
 
   constructor(private readonly browser: ThenableWebDriver, private readonly startURL: string) {}
 

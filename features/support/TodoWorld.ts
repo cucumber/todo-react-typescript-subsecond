@@ -3,8 +3,6 @@ import ReactActor from '../actors/react/ReactActor'
 import TodoListActor from '../actors/domain/TodoListActor'
 import { After, AfterAll, Before, defineParameterType, setWorldConstructor } from 'cucumber'
 import TodoList from '../../src/server/TodoList'
-import makeUseHttpTodoList from '../../src/client/hooks/makeUseHttpTodoList'
-import makeHttpAddTodo from '../../src/client/makeHttpAddTodo'
 import WebDriverActor from '../actors/webdriver/WebDriverActor'
 import Server from '../../src/server/Server'
 import webdriver, { ThenableWebDriver } from 'selenium-webdriver'
@@ -18,13 +16,12 @@ defineParameterType({
   },
 })
 
-const todoList = new TodoList()
-
-let server: Server
-let browser: ThenableWebDriver | null = null
+const sharedTodoList = new TodoList()
+let sharedServer: Server | null = null
+let sharedBrowser: ThenableWebDriver | null = null
 
 class TodoWorld {
-  private readonly todoList = todoList
+  private readonly todoList = sharedTodoList
   private readonly actorsByName = new Map<string, IActor>()
   private readonly closers: Array<() => Promise<void>> = []
 
@@ -32,11 +29,14 @@ class TodoWorld {
     let actor = this.actorsByName.get(name)
     if (actor === undefined) {
       if (process.env.ASSEMBLY === 'react') {
-        actor = await this.makeReactActor(name)
+        actor = await ReactActor.createFromTodoList(name, sharedTodoList)
       } else if (process.env.ASSEMBLY === 'react-http') {
-        actor = await this.makeReactHttpActor(name)
+        actor = await ReactActor.createFromServer(name, await startSharedServer())
       } else if (process.env.ASSEMBLY === 'webdriver') {
-        actor = await this.makeWebDriverActor()
+        actor = await WebDriverActor.createFromServer(
+          startSharedBrowser(),
+          await startSharedServer()
+        )
       } else {
         actor = new TodoListActor()
       }
@@ -54,37 +54,21 @@ class TodoWorld {
   async stop() {
     await Promise.all(this.closers.map(close => close()))
   }
-
-  private async makeReactActor(name: string): Promise<IActor> {
-    const useTodoList = () => this.todoList.getTodos()
-    const addTodo = async (todo: string) => this.todoList.add(todo)
-    return new ReactActor(name, useTodoList, addTodo)
-  }
-
-  private async makeReactHttpActor(name: string): Promise<IActor> {
-    await startServer()
-    const baseURL = new URL(`http://localhost:${server.port}`)
-    const useTodoList = makeUseHttpTodoList(baseURL)
-    const addTodo = makeHttpAddTodo(baseURL)
-    return new ReactActor(name, useTodoList, addTodo)
-  }
-
-  private async makeWebDriverActor(): Promise<IActor> {
-    await startServer()
-    if (browser === null) {
-      browser = new webdriver.Builder().forBrowser('firefox').build()
-    }
-    const startURL = `http://localhost:${server.port}`
-
-    return new WebDriverActor(browser, startURL)
-  }
 }
 
-async function startServer(): Promise<void> {
-  if (!server) {
-    server = new Server(todoList)
-    await server.listen(0)
+async function startSharedServer(): Promise<Server> {
+  if (sharedServer === null) {
+    sharedServer = new Server(sharedTodoList)
+    await sharedServer.listen(0)
   }
+  return sharedServer
+}
+
+function startSharedBrowser(): ThenableWebDriver {
+  if (sharedBrowser === null) {
+    sharedBrowser = new webdriver.Builder().forBrowser('firefox').build()
+  }
+  return sharedBrowser
 }
 
 setWorldConstructor(TodoWorld)
@@ -98,15 +82,15 @@ After(async function() {
 })
 
 AfterAll(async function() {
-  if (browser) {
-    await browser.close()
+  if (sharedBrowser) {
+    await sharedBrowser.close()
     try {
-      await browser.quit()
+      await sharedBrowser.quit()
     } catch (ignore) {
       // no-op
     }
   }
-  if (server) {
-    await server.close()
+  if (sharedServer) {
+    await sharedServer.close()
   }
 })

@@ -7,10 +7,27 @@ import React from 'react'
 import assert from 'assert'
 import getTodosFromDom from '../dom/getTodosFromDom'
 import makeFakeBrowserElement from './makeFakeBrowserElement'
+import TodoList from '../../../src/server/TodoList'
+import Server from '../../../src/server/Server'
+import makeUseHttpTodoList from '../../../src/client/hooks/makeUseHttpTodoList'
+import makeHttpAddTodo from '../../../src/client/makeHttpAddTodo'
 
 export default class ReactActor implements IActor {
   private fakeBrowserErowserElement?: HTMLElement
   private appElement?: HTMLElement
+
+  static createFromTodoList(name: string, todoList: TodoList) {
+    const useTodoList = () => todoList.getTodos()
+    const addTodo = async (todo: string) => todoList.add(todo)
+    return new this(name, useTodoList, addTodo)
+  }
+
+  static createFromServer(name: string, server: Server) {
+    const baseURL = new URL(`http://localhost:${server.port}`)
+    const useTodoList = makeUseHttpTodoList(baseURL)
+    const addTodo = makeHttpAddTodo(baseURL)
+    return new ReactActor(name, useTodoList, addTodo)
+  }
 
   constructor(
     private readonly name: string,
