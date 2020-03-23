@@ -1,11 +1,18 @@
 import IActor from '../actors/IActor'
 import ReactActor from '../actors/react/ReactActor'
 import TodoListActor from '../actors/domain/TodoListActor'
-import { After, AfterAll, Before, defineParameterType, setWorldConstructor } from 'cucumber'
+import {
+  After,
+  AfterAll,
+  Before,
+  defineParameterType,
+  setDefaultTimeout,
+  setWorldConstructor,
+} from 'cucumber'
 import TodoList from '../../src/server/TodoList'
 import WebDriverActor from '../actors/webdriver/WebDriverActor'
 import Server from '../../src/server/Server'
-import webdriver, { ThenableWebDriver, WebDriver } from 'selenium-webdriver'
+import webdriver, { WebDriver } from 'selenium-webdriver'
 
 defineParameterType({
   name: 'actor',
@@ -69,6 +76,10 @@ async function startSharedBrowser(): Promise<WebDriver> {
 }
 
 setWorldConstructor(TodoWorld)
+
+if (process.env.ASSEMBLY === 'webdriver') {
+  setDefaultTimeout(15 * 1000)
+}
 
 Before(async function () {
   await this.start()

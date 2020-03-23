@@ -4,37 +4,41 @@ import { JSDOM } from 'jsdom'
 import getTodosFromDom from '../dom/getTodosFromDom'
 import Server from '../../../src/server/Server'
 import { promisify } from 'util'
-import fs from 'fs'
-const readFile = promisify(fs.readFile)
 
 export default class WebDriverActor implements IActor {
   private doc?: HTMLElement
 
   static async createBrowser(): Promise<WebDriver> {
-    // https://help.crossbrowsertesting.com/selenium-testing/getting-started/crossbrowsertesting-automation-capabilities/
     const browserName = process.env.BROWSER || 'firefox'
-    try {
-      const capabilitiesFileName = `${__dirname}/${browserName}.json`
-      const capabilitiesJson = await readFile(capabilitiesFileName, {
-        encoding: 'utf-8',
-      })
-      const capabilities = JSON.parse(capabilitiesJson)
+    if (process.env.CBT === '1') {
+      // https://help.crossbrowsertesting.com/selenium-testing/getting-started/crossbrowsertesting-automation-capabilities/
       const username = process.env['CBT_USERNAME']
       const authkey = process.env['CBT_AUTHKEY']
-      capabilities.username = username
-      capabilities.password = authkey
-
+      const capabilities = {
+        name: 'TODO app',
+        build: '1.0',
+        platform: process.env['CBT_PLATFORM'] || 'Windows 10',
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        screen_resolution: '1366x768',
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        record_video: 'true',
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        record_network: 'true',
+        browserName,
+        version: process.env['CBT_VERSION'] || 'latest',
+        username,
+        password: authkey,
+      }
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       const cbt = require('cbt_tunnels')
       const cbtStart = promisify(cbt.start.bind(cbt))
       await cbtStart({ username, authkey })
-
       return new webdriver.Builder()
         .usingServer('http://hub.crossbrowsertesting.com/wd/hub')
         .withCapabilities(capabilities)
         .build()
-    } catch (ignore) {
-      return new webdriver.Builder().forBrowser('firefox').build()
+    } else {
+      return new webdriver.Builder().forBrowser(browserName).build()
     }
   }
 

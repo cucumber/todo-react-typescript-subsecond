@@ -22,8 +22,13 @@ export default function makeUseHttpTodoList(baseURL: URL, eventSource: EventSour
 
     async function fetchAndSetTodos() {
       const response = await fetch(new URL('/todos', baseURL).toString())
-      const todos = await response.json()
-      setTodos(todos)
+      try {
+        const todos = await response.json()
+        setTodos(todos)
+      } catch (notJson) {
+        const text = await response.text()
+        setError(new Error(`Not JSON:\n${text}`))
+      }
     }
 
     return todos
