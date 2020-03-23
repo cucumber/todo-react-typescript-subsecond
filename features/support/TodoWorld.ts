@@ -16,35 +16,40 @@ defineParameterType({
   },
 })
 
-const sharedTodoList = new TodoList()
-let sharedServer: Server | null = null
 let sharedBrowser: ThenableWebDriver | null = null
 
 class TodoWorld {
-  private readonly todoList = sharedTodoList
+  private readonly todoList = new TodoList()
   private readonly actorsByName = new Map<string, IActor>()
-  private readonly closers: Array<() => Promise<void>> = []
+  private readonly stoppers: Array<() => Promise<void>> = []
 
   async getActorByName(name: string): Promise<IActor> {
     let actor = this.actorsByName.get(name)
     if (actor === undefined) {
       if (process.env.ASSEMBLY === 'react') {
-        actor = await ReactActor.createFromTodoList(name, sharedTodoList)
+        actor = await ReactActor.createFromTodoList(name, this.todoList)
       } else if (process.env.ASSEMBLY === 'react-http') {
-        actor = await ReactActor.createFromServer(name, await startSharedServer())
+        actor = await ReactActor.createFromServer(name, await this.startServer())
       } else if (process.env.ASSEMBLY === 'webdriver') {
         actor = await WebDriverActor.createFromServer(
           startSharedBrowser(),
-          await startSharedServer()
+          await this.startServer()
         )
       } else {
         actor = new TodoListActor()
       }
       this.actorsByName.set(name, actor)
       await actor.start()
-      this.closers.push(actor.stop.bind(actor))
+      this.stoppers.push(actor.stop.bind(actor))
     }
     return actor
+  }
+
+  async startServer(): Promise<Server> {
+    const server = new Server(this.todoList)
+    await server.listen(0)
+    this.stoppers.push(server.close.bind(server))
+    return server
   }
 
   async start() {
@@ -52,16 +57,10 @@ class TodoWorld {
   }
 
   async stop() {
-    await Promise.all(this.closers.map(close => close()))
+    for (const stop of this.stoppers.reverse()) {
+      await stop()
+    }
   }
-}
-
-async function startSharedServer(): Promise<Server> {
-  if (sharedServer === null) {
-    sharedServer = new Server(sharedTodoList)
-    await sharedServer.listen(0)
-  }
-  return sharedServer
 }
 
 function startSharedBrowser(): ThenableWebDriver {
@@ -73,15 +72,15 @@ function startSharedBrowser(): ThenableWebDriver {
 
 setWorldConstructor(TodoWorld)
 
-Before(async function() {
+Before(async function () {
   await this.start()
 })
 
-After(async function() {
+After(async function () {
   await this.stop()
 })
 
-AfterAll(async function() {
+AfterAll(async function () {
   if (sharedBrowser) {
     await sharedBrowser.close()
     try {
@@ -89,8 +88,5 @@ AfterAll(async function() {
     } catch (ignore) {
       // no-op
     }
-  }
-  if (sharedServer) {
-    await sharedServer.close()
   }
 })

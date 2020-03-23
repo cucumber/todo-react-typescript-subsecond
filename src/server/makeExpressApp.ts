@@ -1,10 +1,13 @@
-import express from 'express'
+import express, { Express } from 'express'
 import bodyParser from 'body-parser'
 import SseStream from 'ssestream'
 import TodoList from './TodoList'
-import { RequestListener } from 'http'
 
-export default function makeExpressApp(todoList: TodoList): RequestListener {
+/**
+ * @return a request listener and a function to close connected event sources
+ * @param todoList
+ */
+export default function makeExpressApp(todoList: TodoList): Express {
   const connectedEventSources = new Set<SseStream>()
   const app = express()
 
@@ -16,8 +19,8 @@ export default function makeExpressApp(todoList: TodoList): RequestListener {
     connectedEventSources.add(sse)
     sse.pipe(res)
     req.on('close', () => {
-      sse.unpipe(res)
       connectedEventSources.delete(sse)
+      sse.end()
     })
   })
 

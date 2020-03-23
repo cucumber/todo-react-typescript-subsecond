@@ -16,7 +16,7 @@ export default class WebDriverActor implements IActor {
 
   async addTodo(todo: string): Promise<void> {
     await this.updateDoc()
-    const todoCount = this.getTodos().length
+    const todoCount = this.getTodos()!.length
 
     const input = await this.browser.findElement(
       By.css("input[placeholder='What needs to be done?']")
@@ -26,7 +26,7 @@ export default class WebDriverActor implements IActor {
 
     await this.browser.wait(async () => {
       await this.updateDoc()
-      return this.getTodos().length === todoCount + 1
+      return this.getTodos()!.length === todoCount + 1
     })
   }
 
@@ -35,7 +35,7 @@ export default class WebDriverActor implements IActor {
     this.doc = new JSDOM(html).window.document.documentElement
   }
 
-  getTodos(): ReadonlyArray<string> {
+  getTodos(): ReadonlyArray<string>|null {
     return getTodosFromDom(this.doc!)
   }
 

@@ -1,14 +1,24 @@
 import http from 'http'
 import { promisify } from 'util'
-import { AddressInfo } from 'net'
+import { AddressInfo, Socket } from 'net'
 import makeExpressApp from './makeExpressApp'
 import TodoList from './TodoList'
+import { Express } from 'express'
 
 export default class Server {
   private readonly server: http.Server
+  private readonly sockets = new Set<Socket>()
+  private readonly express: Express
 
   constructor(todoList: TodoList) {
-    this.server = http.createServer(makeExpressApp(todoList))
+    this.express = makeExpressApp(todoList)
+    this.server = http.createServer(this.express)
+    this.server.on('connection', (socket) => {
+      this.sockets.add(socket)
+      socket.once('close', () => {
+        this.sockets.delete(socket)
+      })
+    })
   }
 
   async listen(port: number) {
@@ -22,7 +32,12 @@ export default class Server {
   }
 
   async close() {
-    const close = promisify(this.server.close.bind(this.server))
-    await close()
+    await new Promise((resolve) => {
+      this.server.once('close', resolve)
+      this.server.close()
+      for (const socket of this.sockets) {
+        socket.destroy()
+      }
+    })
   }
 }

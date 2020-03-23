@@ -4,6 +4,8 @@
  *
  * @param baseURL the base URL of the server
  */
+import { AddTodo } from './components/types'
+
 export default function makeHttpAddTodo(baseURL: URL): AddTodo {
   return async (todo: string): Promise<void> => {
     const url = new URL('/todos', baseURL).toString()

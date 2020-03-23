@@ -1,14 +1,17 @@
 import React, { useState } from 'react'
+import { AddTodo, UseDisconnected, UseTodoList } from './types'
 
 const ENTER_KEY = 13
 
 interface IProps {
+  useDisconnected: UseDisconnected
   useTodoList: UseTodoList
   addTodo: AddTodo
 }
 
-const TodoApp: React.FunctionComponent<IProps> = ({ useTodoList, addTodo }) => {
+const TodoApp: React.FunctionComponent<IProps> = ({ useDisconnected, useTodoList, addTodo }) => {
   const [error, setError] = useState<Error | null>()
+  const disconnected = useDisconnected()
   const [newTodo, setNewTodo] = useState('')
   const todoList = useTodoList(setError)
 
@@ -26,13 +29,14 @@ const TodoApp: React.FunctionComponent<IProps> = ({ useTodoList, addTodo }) => {
   return (
     <header>
       {error && <pre>{error.message}</pre>}
+      <pre>{disconnected ? 'connecting...' : 'connected'}</pre>
       <h1>todos</h1>
       <input
-        className="new-todo"
-        placeholder={todoList === null ? 'Please wait' : 'What needs to be done?'}
+        placeholder={'What needs to be done?'}
         value={newTodo}
         onChange={onChange}
         onKeyDown={onKeydown}
+        disabled={disconnected}
       />
       {todoList === null ? (
         <div>Loading...</div>

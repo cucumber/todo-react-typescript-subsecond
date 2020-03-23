@@ -1,24 +1,21 @@
 import { useEffect, useState } from 'react'
+import { SetError, UseTodoList } from '../components/types'
 
 /**
  * Makes a {@link UseTodoList} React hook that uses an EventSource connection
  * to signal when the server's todolist has been updated.
  *
  * @param baseURL the base URL of the server
+ * @param eventSource the eventSource to get update notifications from
  * @return a {@link UseTodoList} React hook
  */
-export default function makeUseHttpTodoList(baseURL: URL): UseTodoList {
+export default function makeUseHttpTodoList(baseURL: URL, eventSource: EventSource): UseTodoList {
   return (setError: SetError) => {
     const [todos, setTodos] = useState<ReadonlyArray<string> | null>(null)
 
     useEffect(() => {
-      const eventSource = new EventSource(new URL('/eventsource', baseURL).toString())
       eventSource.addEventListener('todos-updated', () => fetchAndSetTodos().catch(setError))
-      eventSource.onerror = () => setError(new Error('EventSource error'))
-      eventSource.onopen = () => setError(null)
       fetchAndSetTodos().catch(setError)
-
-      return () => eventSource.close()
     }, [])
 
     async function fetchAndSetTodos() {

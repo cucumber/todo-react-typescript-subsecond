@@ -1,6 +1,27 @@
 # todo-react-typescript-subsecond
 Tiny Todo app in React and TypeScript demonstrating sub-second test feedback
 
+## Start the app
+
+    npm start
+
+## Run tests
+
+    npm test
+
+### Run tests in a particular assembly
+
+    # Look for possible values in features/support/TodoWorld.ts
+    ASSEMBLY=... ./cucumber
+
+### Run Cucumber-Electron interactively
+
+    ASSEMBLY=react ./cucumber -i
+
+Keep each actor's DOM (omit cleaning up)
+
+    ASSEMBLY=react KEEP_DOM=1 ./cucumber -i
+
 ## Patterns
 
 ### Test code

@@ -8,4 +8,4 @@ async function main() {
   console.log(`TODOs ready on http://localhost:${server.port}`)
 }
 
-main().catch(err => console.error(err))
+main().catch((err) => console.error(err))
