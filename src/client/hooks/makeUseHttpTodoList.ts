@@ -14,8 +14,10 @@ export default function makeUseHttpTodoList(baseURL: URL, eventSource: EventSour
     const [todos, setTodos] = useState<ReadonlyArray<string> | null>(null)
 
     useEffect(() => {
-      eventSource.addEventListener('todos-updated', () => fetchAndSetTodos().catch(setError))
+      const fetchAndSetTodosListener = () => fetchAndSetTodos().catch(setError)
+      eventSource.addEventListener('todos-updated', fetchAndSetTodosListener)
       fetchAndSetTodos().catch(setError)
+      return () => eventSource.removeEventListener('todos-updated', fetchAndSetTodosListener)
     }, [])
 
     async function fetchAndSetTodos() {

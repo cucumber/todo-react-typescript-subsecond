@@ -14,6 +14,10 @@ export default function makeUseEventSourceDisconnected(eventSource: EventSource)
     useEffect(() => {
       eventSource.onerror = () => setDisconnected(true)
       eventSource.onopen = () => setDisconnected(false)
+      return () => {
+        eventSource.onerror = () => undefined
+        eventSource.onopen = () => undefined
+      }
     }, [])
     return disconnected
   }
