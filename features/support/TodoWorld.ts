@@ -5,7 +5,7 @@ import { After, AfterAll, Before, defineParameterType, setWorldConstructor } fro
 import TodoList from '../../src/server/TodoList'
 import WebDriverActor from '../actors/webdriver/WebDriverActor'
 import Server from '../../src/server/Server'
-import webdriver, { ThenableWebDriver } from 'selenium-webdriver'
+import webdriver, { ThenableWebDriver, WebDriver } from 'selenium-webdriver'
 
 defineParameterType({
   name: 'actor',
@@ -16,7 +16,7 @@ defineParameterType({
   },
 })
 
-let sharedBrowser: ThenableWebDriver | null = null
+let sharedBrowser: WebDriver | null = null
 
 class TodoWorld {
   private readonly todoList = new TodoList()
@@ -31,10 +31,8 @@ class TodoWorld {
       } else if (process.env.ASSEMBLY === 'react-http') {
         actor = await ReactActor.createFromServer(name, await this.startServer())
       } else if (process.env.ASSEMBLY === 'webdriver') {
-        actor = await WebDriverActor.createFromServer(
-          startSharedBrowser(),
-          await this.startServer()
-        )
+        const browser = await startSharedBrowser()
+        actor = await WebDriverActor.createFromServer(browser, await this.startServer())
       } else {
         actor = new TodoListActor()
       }
@@ -63,9 +61,9 @@ class TodoWorld {
   }
 }
 
-function startSharedBrowser(): ThenableWebDriver {
+async function startSharedBrowser(): Promise<WebDriver> {
   if (sharedBrowser === null) {
-    sharedBrowser = new webdriver.Builder().forBrowser('firefox').build()
+    sharedBrowser = await WebDriverActor.createBrowser()
   }
   return sharedBrowser
 }

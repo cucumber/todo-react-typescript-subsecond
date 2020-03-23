@@ -45,14 +45,28 @@ Keep each actor's DOM (omit cleaning up)
 
 ### Webinar script
 
+* Beginning
+    * Why Cucumber
+    * Why CBT
+    * Why Sub-Second important
+* Middle
+    * Demo + architecture slides
+    * Find IE bug
+    * Fix it
+* End
+    * Sum up tradeoff speed/confidence
+    * Mention deeper dive into this in future
+    * Q/A
+
 * Explain purpose
   * Show BDD workflow with sub-second feedback
+  * This webinar only works for Node.js, audience primarily developer
   * With full-stack UI tests (React app + Server)
   * Way for *developers* to get fast feedback
-  * Nielsen: 0.1s, 1, 10s
+  * Jacob Nielsen: 0.1s, 1, 10s
     * Applies to development - must be < 1s to keep flow
   * WebDriver is fast, but boot time is long
-  * We want WebDriver confidence without latency penalty
+  * We want WebDriver/CBT confidence without latency penalty
   * Why WD slow:
     * Webpack
     * Launch WebDriver's browser
