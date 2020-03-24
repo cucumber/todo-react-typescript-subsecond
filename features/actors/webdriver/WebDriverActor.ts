@@ -30,11 +30,6 @@ export default class WebDriverActor implements IActor {
     })
   }
 
-  private async updateDoc() {
-    const html = await this.browser.getPageSource()
-    this.doc = new JSDOM(html).window.document.documentElement
-  }
-
   getTodos(): ReadonlyArray<string> | null {
     return getTodosFromDom(this.doc!)
   }
@@ -51,5 +46,10 @@ export default class WebDriverActor implements IActor {
     // We're not closing the browser here. Instead we're reusing a shared instance to speed up our scenarios.
     // The shared browser is closed in the AfterAll hook defined in TodoWorld
     return Promise.resolve()
+  }
+
+  private async updateDoc() {
+    const html = await this.browser.getPageSource()
+    this.doc = new JSDOM(html).window.document.documentElement
   }
 }
