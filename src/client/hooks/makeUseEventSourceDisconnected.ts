@@ -14,9 +14,22 @@ export default function makeUseEventSourceDisconnected(eventSource: EventSource)
     useEffect(() => {
       eventSource.onerror = () => setDisconnected(true)
       eventSource.onopen = () => setDisconnected(false)
+      // Poll connection status. Needed because the EventSource may have connected *before* the effect has a chance
+      // to register the handlers
+      const statusPoller = setInterval(() => {
+        switch (eventSource.readyState) {
+          case EventSource.CLOSED:
+          case EventSource.CONNECTING:
+            setDisconnected(true)
+            break
+          case EventSource.OPEN:
+            setDisconnected(false)
+        }
+      }, 100)
       return () => {
         eventSource.onerror = () => undefined
         eventSource.onopen = () => undefined
+        clearInterval(statusPoller)
       }
     }, [])
     return disconnected
