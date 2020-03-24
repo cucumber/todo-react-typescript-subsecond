@@ -1,0 +1,48 @@
+.todos {
+    font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: rgb(245, 245, 245);
+    color: #333;
+}
+.todos h1 {
+    margin: 20px;
+    display: block;
+    text-align: center;
+    font-size: 100px;
+    color: rgba(175, 47, 47, 0.3);
+    font-weight: 100;
+}
+.todos section {
+    text-align: center;
+    width: 600px;
+    margin: auto;
+    padding: 20px;
+    background-color: #fff;
+    border: 3px solid #efefef;
+    border-bottom: none;
+}
+.todos section, .todos input {
+    font-size: 30px;
+    font-weight: 400;
+}
+.todos section input {
+    border: 2px solid #efefef;
+    padding: 10px;
+    width: 400px;
+    text-indent: 20px;
+}
+.todos ol {
+    padding: 0;
+    border: 3px solid #efefef;
+    border-top: none;
+}
+.todos ol li {
+    list-style-type: none;
+    border-top: 2px solid #efefef;
+    position: relative;
+}
+.todos ol li label {
+    display: block;
+    background-color: #fff;
+    color: #333;
+    padding: 10px;
+}

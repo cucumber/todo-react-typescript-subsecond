@@ -1,44 +1,11 @@
 import IActor from '../IActor'
-import webdriver, { By, Key, WebDriver } from 'selenium-webdriver'
+import { By, Key, WebDriver } from 'selenium-webdriver'
 import { JSDOM } from 'jsdom'
 import getTodosFromDom from '../dom/getTodosFromDom'
 import Server from '../../../src/server/Server'
-import { promisify } from 'util'
-import capabilities from './capabilities'
 
 export default class WebDriverActor implements IActor {
   private doc?: HTMLElement
-
-  static async createBrowser(): Promise<WebDriver> {
-    const browserName = process.env.BROWSER || 'firefox'
-    if (process.env.CBT === '1') {
-      const username = process.env['CBT_USERNAME']!
-      const authkey = process.env['CBT_AUTHKEY']!
-      await this.startCbtTunnel(username, authkey)
-      const caps = capabilities(browserName)
-
-      console.log(caps)
-
-      // @ts-ignore
-      caps.username = username
-      // @ts-ignore
-      caps.password = authkey
-
-      return new webdriver.Builder()
-        .usingServer(`http://hub.crossbrowsertesting.com/wd/hub`)
-        .withCapabilities(caps)
-        .build()
-    } else {
-      return new webdriver.Builder().forBrowser(browserName).build()
-    }
-  }
-
-  private static async startCbtTunnel(username: string, authkey: string) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const cbt = require('cbt_tunnels')
-    const cbtStart = promisify(cbt.start.bind(cbt))
-    await cbtStart({ username, authkey })
-  }
 
   static async createFromServer(browser: WebDriver, server: Server) {
     const startURL = `http://localhost:${server.port}`

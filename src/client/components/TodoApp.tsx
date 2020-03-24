@@ -27,29 +27,33 @@ const TodoApp: React.FunctionComponent<IProps> = ({ useDisconnected, useTodoList
   }
 
   return (
-    <header>
-      {error && <pre>{error.message}</pre>}
-      <pre>{disconnected ? 'connecting...' : 'connected'}</pre>
-      <h1>todos</h1>
-      <input
-        placeholder={'What needs to be done?'}
-        value={newTodo}
-        onChange={onChange}
-        onKeyDown={onKeydown}
-        disabled={disconnected}
-      />
-      {todoList === null ? (
-        <div>Loading...</div>
-      ) : (
-        <ul itemScope itemType="http://schema.org/ItemList">
-          {todoList.map((todo, n) => (
-            <li key={n} itemProp="itemListElement" itemType="http://schema.org/Text">
-              {todo}
-            </li>
-          ))}
-        </ul>
-      )}
-    </header>
+    <div className="todos">
+      <header>
+        {error && <pre>{error.message}</pre>}
+        <pre>{disconnected ? 'connecting...' : 'connected'}</pre>
+        <h1>todos</h1>
+      </header>
+      <section>
+        <input
+          placeholder={'What needs to be done?'}
+          value={newTodo}
+          onChange={onChange}
+          onKeyDown={onKeydown}
+          disabled={disconnected}
+        />
+        {todoList === null ? (
+          <div>Loading...</div>
+        ) : (
+          <ol itemScope itemType="http://schema.org/ItemList">
+            {todoList.map((todo, n) => (
+              <li key={n} itemProp="itemListElement" itemType="http://schema.org/Text">
+                <label>{todo}</label>
+              </li>
+            ))}
+          </ol>
+        )}
+      </section>
+    </div>
   )
 }
 

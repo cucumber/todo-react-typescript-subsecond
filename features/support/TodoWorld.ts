@@ -1,3 +1,4 @@
+import { WebDriver } from 'selenium-webdriver'
 import IActor from '../actors/IActor'
 import ReactActor from '../actors/react/ReactActor'
 import TodoListActor from '../actors/domain/TodoListActor'
@@ -12,7 +13,8 @@ import {
 import TodoList from '../../src/server/TodoList'
 import WebDriverActor from '../actors/webdriver/WebDriverActor'
 import Server from '../../src/server/Server'
-import webdriver, { WebDriver } from 'selenium-webdriver'
+import createWebDriver from '../actors/webdriver/createWebDriver'
+import quitWebDriver from '../actors/webdriver/quitWebDriver'
 
 defineParameterType({
   name: 'actor',
@@ -70,7 +72,7 @@ class TodoWorld {
 
 async function startSharedBrowser(): Promise<WebDriver> {
   if (sharedBrowser === null) {
-    sharedBrowser = await WebDriverActor.createBrowser()
+    sharedBrowser = await createWebDriver()
   }
   return sharedBrowser
 }
@@ -91,11 +93,6 @@ After(async function () {
 
 AfterAll(async function () {
   if (sharedBrowser) {
-    await sharedBrowser.close()
-    try {
-      await sharedBrowser.quit()
-    } catch (ignore) {
-      // no-op
-    }
+    await quitWebDriver(sharedBrowser)
   }
 })

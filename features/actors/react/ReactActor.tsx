@@ -84,7 +84,9 @@ export default class ReactActor implements IActor {
   inputEnabled() {
     return () => {
       const input = this.appElement!.querySelector('input')
-      assert(!input!.disabled)
+      if (input!.disabled) {
+        throw new Error('<input> not enabled')
+      }
       return input
     }
   }
