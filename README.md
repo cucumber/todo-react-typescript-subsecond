@@ -22,6 +22,22 @@ Keep each actor's DOM (omit cleaning up)
 
     ASSEMBLY=react KEEP_DOM=1 ./cucumber -i
 
+### Run on CBT
+
+Make sure you've built the client-side JavaScript:
+
+    npm run build
+
+Define your CBT credentials:
+
+    export CBT_USERNAME=...
+    export CBT_AUTHKEY=...
+
+Run with a specific browser:
+
+    ASSEMBLY=webdriver BROWSER=MicrosoftEdge CBT=1 CBT_VERSION=79 ./cucumber
+    ASSEMBLY=webdriver BROWSER=chrome CBT=1 CBT_VERSION=55 ./cucumber
+
 ## Patterns
 
 ### Test code
