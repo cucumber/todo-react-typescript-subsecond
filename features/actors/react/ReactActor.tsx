@@ -56,6 +56,7 @@ export default class ReactActor implements IActor {
   }
 
   async start(): Promise<void> {
+    addStylesheet()
     this.fakeBrowserErowserElement = await makeFakeBrowserElement(this.title)
     this.appElement = this.fakeBrowserErowserElement.querySelector(
       'div.cucumber-electron-fake-browser-content'
@@ -90,4 +91,16 @@ export default class ReactActor implements IActor {
       return input
     }
   }
+}
+
+let stylesheetAdded = false
+function addStylesheet() {
+  if (stylesheetAdded) {
+    return
+  }
+  const link = document.createElement('link')
+  link.rel = 'stylesheet'
+  link.href = __dirname + '/../../../public/todo.css'
+  document.head.appendChild(link)
+  stylesheetAdded = true
 }
