@@ -1,5 +1,4 @@
 import { render, unmountComponentAtNode } from 'react-dom'
-// @ts-ignore
 import { fireEvent, waitFor } from '@testing-library/dom'
 import IActor from '../IActor'
 import TodoApp from '../../../src/client/components/TodoApp'
@@ -84,7 +83,7 @@ export default class ReactActor implements IActor {
 
   inputEnabled() {
     return () => {
-      const input = this.appElement!.querySelector('input')
+      const input = this.appElement!.querySelector('input')!
       if (input!.disabled) {
         throw new Error('<input> not enabled')
       }
