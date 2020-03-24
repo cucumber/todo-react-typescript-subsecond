@@ -28,5 +28,5 @@ async function startCbtTunnel(username: string, authkey: string) {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const cbt = require('cbt_tunnels')
   const cbtStart = promisify(cbt.start.bind(cbt))
-  await cbtStart({ username, authkey })
+  await cbtStart({ username, authkey, nokill: true })
 }
